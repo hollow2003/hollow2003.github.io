@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黄翩然 · 具身智能与机器人系统</title>
+<meta name="description" content="黄翩然（Huang Pianran）— 具身智能与机器人系统方向研究生。LLM 规划 × VLM 感知 × 行为树编排，感知到控制的端到端机器人操作框架。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Serif+SC:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf9f5;
+    --bg-soft: #f2efe8;
+    --card: #ffffff;
+    --card-hover: #fbfaf6;
+    --border: #e2ddd2;
+    --border-strong: #c9c2b2;
+    --text: #24292f;
+    --text-dim: #57606a;
+    --text-faint: #8b929b;
+    --accent: #1f4e79;       /* academic blue */
+    --accent2: #7c3a3f;      /* burgundy */
+    --accent3: #3e6b4f;      /* forest green */
+    --accent-soft: #eaf0f6;
+    --serif: "STIX Two Text", Georgia, "Times New Roman", "Noto Serif SC", "Songti SC", "SimSun", serif;
+    --sans: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", "Cascadia Code", Consolas, monospace;
+  }
+  [data-theme="dark"] {
+    --bg: #15181d;
+    --bg-soft: #1a1e24;
+    --card: #1d2127;
+    --card-hover: #22272e;
+    --border: #2d333b;
+    --border-strong: #444c56;
+    --text: #e6e4df;
+    --text-dim: #a3aab3;
+    --text-faint: #6e7681;
+    --accent: #85a9c9;
+    --accent2: #c48a8e;
+    --accent3: #8ab098;
+    --accent-soft: #1f2933;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.75;
+    transition: background .3s, color .3s;
+  }
+  ::selection { background: var(--accent); color: #fff; }
+  h1, h2, h3, .serif { font-family: var(--serif); }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- Language toggle ---------- */
+  .en { display: none; }
+  html[data-lang="en"] .zh { display: none; }
+  html[data-lang="en"] .en { display: inline; }
+  html[data-lang="en"] p.en, html[data-lang="en"] div.en,
+  html[data-lang="en"] li.en, html[data-lang="en"] h3.en { display: block; }
+
+  /* ---------- Nav ---------- */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 960px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    font-family: var(--serif); font-weight: 700; font-size: 17px;
+    color: var(--text); text-decoration: none; letter-spacing: .5px;
+  }
+  .logo em { font-style: normal; color: var(--accent); }
+  .nav-links { display: flex; gap: 20px; align-items: center; }
+  .nav-links a {
+    color: var(--text-dim); text-decoration: none; font-size: 14px;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-btn {
+    background: none; border: 1px solid var(--border-strong); color: var(--text-dim);
+    border-radius: 6px; height: 30px; cursor: pointer; font-size: 13px;
+    padding: 0 10px; font-family: var(--sans);
+    transition: border-color .2s, color .2s;
+  }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- Hero ---------- */
+  header { padding: 88px 0 64px; border-bottom: 1px solid var(--border); }
+  .overline {
+    font-family: var(--mono); font-size: 12.5px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--accent2); margin-bottom: 18px;
+  }
+  h1.name {
+    font-size: clamp(34px, 5.5vw, 50px); font-weight: 700;
+    letter-spacing: .5px; line-height: 1.2;
+  }
+  h1.name .sub {
+    display: block; font-size: .42em; font-weight: 400; color: var(--text-faint);
+    letter-spacing: 4px; margin-top: 6px; text-transform: uppercase;
+  }
+  .tagline {
+    margin-top: 22px; font-size: clamp(16px, 2.2vw, 19px);
+    color: var(--text-dim); max-width: 660px; font-family: var(--serif);
+  }
+  .tagline b { color: var(--text); font-weight: 600; }
+  .hero-tags { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 9px; }
+  .chip {
+    font-size: 12.5px; padding: 4px 13px; letter-spacing: .3px;
+    border: 1px solid var(--border-strong); border-radius: 3px;
+    color: var(--text-dim); background: var(--card);
+  }
+  .hero-cta { margin-top: 36px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 24px; border-radius: 4px; text-decoration: none;
+    font-size: 14.5px; font-weight: 500; letter-spacing: .3px;
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+  .btn-primary:hover { background: color-mix(in srgb, var(--accent) 85%, black); }
+  .btn-ghost { border: 1px solid var(--border-strong); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- Sections ---------- */
+  section { padding: 68px 0; border-bottom: 1px solid var(--border); }
+  .sec-title { display: flex; align-items: baseline; gap: 16px; margin-bottom: 38px; }
+  .sec-title .num { font-family: var(--serif); font-style: italic; color: var(--accent2); font-size: 17px; }
+  .sec-title h2 { font-size: 25px; font-weight: 700; letter-spacing: .5px; }
+  .sec-title .line { flex: 1; height: 1px; background: var(--border-strong); opacity: .5; }
+
+  /* ---------- About ---------- */
+  .about-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 44px; }
+  .about-text p { color: var(--text-dim); margin-bottom: 16px; font-size: 15.5px; }
+  .about-text p b { color: var(--text); }
+  .fact-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+    padding: 26px 28px; align-self: start;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  .fact-card h3 {
+    font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 14px; font-family: var(--sans); font-weight: 600;
+  }
+  .fact-card ul { list-style: none; }
+  .fact-card li {
+    padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+    color: var(--text-dim); display: flex; justify-content: space-between; gap: 12px;
+  }
+  .fact-card li:last-child { border-bottom: none; }
+  .fact-card li b { color: var(--text); font-weight: 600; white-space: nowrap; }
+
+  /* ---------- Pipeline ---------- */
+  .pipeline-intro { color: var(--text-dim); max-width: 720px; margin-bottom: 34px; font-size: 15.5px; }
+  .pipeline-intro b { color: var(--text); }
+  .pipeline { display: flex; align-items: stretch; flex-wrap: wrap; justify-content: center; }
+  .stage {
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+    padding: 18px 16px; width: 164px; text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    transition: border-color .2s;
+  }
+  .stage:hover { border-color: var(--accent); }
+  .stage .icon { font-size: 22px; margin-bottom: 8px; opacity: .85; }
+  .stage h4 { font-size: 14.5px; margin-bottom: 4px; font-family: var(--serif); }
+  .stage p { font-size: 12.5px; color: var(--text-faint); line-height: 1.55; }
+  .arrow { align-self: center; color: var(--accent2); font-size: 18px; padding: 0 9px; font-family: var(--serif); }
+  .loopback {
+    margin-top: 22px; text-align: center; font-size: 13.5px;
+    color: var(--accent3); font-family: var(--serif); font-style: italic;
+  }
+  .research-q {
+    margin-top: 42px; background: var(--accent-soft);
+    border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0;
+    padding: 24px 28px;
+  }
+  .research-q .label {
+    font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px; font-weight: 600;
+  }
+  .research-q p { color: var(--text); font-size: 16.5px; font-family: var(--serif); }
+  .research-q .props { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .research-q .props span {
+    font-size: 12px; color: var(--text-dim); letter-spacing: .3px;
+    border: 1px solid var(--border-strong); border-radius: 3px;
+    padding: 3px 10px; background: var(--card);
+  }
+
+  /* ---------- Projects ---------- */
+  .proj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; }
+  .proj {
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+    padding: 24px 26px; display: flex; flex-direction: column; gap: 11px;
+    text-decoration: none; color: inherit;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .proj:hover { border-color: var(--accent); box-shadow: 0 3px 10px rgba(0,0,0,.07); }
+  .proj-head { display: flex; align-items: center; justify-content: space-between; }
+  .proj-head .icon { font-size: 21px; opacity: .85; }
+  .proj-head .ext { color: var(--text-faint); font-size: 15px; transition: color .2s; }
+  .proj:hover .ext { color: var(--accent); }
+  .proj h3 { font-size: 16.5px; font-weight: 700; }
+  .proj p { font-size: 13.8px; color: var(--text-dim); flex: 1; }
+  .proj .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .proj .tags span {
+    font-size: 11.5px; color: var(--accent); letter-spacing: .2px;
+    background: var(--accent-soft); border-radius: 3px; padding: 2px 9px;
+  }
+  .proj-note { margin-top: 22px; font-size: 13px; color: var(--text-faint); font-style: italic; }
+
+  /* ---------- Skills ---------- */
+  .skill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+  .skill-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+    padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  .skill-card h3 {
+    font-size: 15px; margin-bottom: 12px; padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent); display: inline-block;
+  }
+  .skill-card:nth-child(2) h3 { border-color: var(--accent2); }
+  .skill-card:nth-child(3) h3 { border-color: var(--accent3); }
+  .skill-card:nth-child(4) h3 { border-color: var(--border-strong); }
+  .skill-card ul { list-style: none; }
+  .skill-card li { font-size: 13.5px; color: var(--text-dim); padding: 4px 0; }
+  .skill-card li::before { content: "· "; color: var(--accent2); font-weight: 700; }
+
+  /* ---------- Experience ---------- */
+  .timeline { position: relative; padding-left: 30px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 6px; top: 6px; bottom: 6px;
+    width: 1px; background: var(--border-strong);
+  }
+  .titem { position: relative; padding-bottom: 36px; }
+  .titem:last-child { padding-bottom: 0; }
+  .titem::before {
+    content: ""; position: absolute; left: -28.5px; top: 8px; width: 10px; height: 10px;
+    border-radius: 50%; background: var(--bg); border: 2px solid var(--accent2);
+  }
+  .titem h3 { font-size: 16.5px; }
+  .titem .meta {
+    font-size: 12.5px; color: var(--text-faint); margin: 4px 0 10px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .titem p { font-size: 14.5px; color: var(--text-dim); max-width: 700px; }
+  .titem ul.tlist { list-style: none; max-width: 700px; margin-top: 6px; }
+  .titem ul.tlist li { font-size: 14px; color: var(--text-dim); padding: 3px 0; }
+  .titem ul.tlist li::before { content: "· "; color: var(--accent2); font-weight: 700; }
+  .titem .badge {
+    display: inline-block; font-size: 11.5px; letter-spacing: 1px; vertical-align: 2px;
+    color: var(--accent); border: 1px solid var(--accent); border-radius: 3px;
+    padding: 0 8px; margin-left: 10px; font-family: var(--sans); font-weight: 500;
+  }
+
+  /* ---------- Footer ---------- */
+  footer { padding: 60px 0 48px; text-align: center; }
+  footer .quote {
+    font-size: 17px; color: var(--text-dim); font-style: italic;
+    font-family: var(--serif); margin-bottom: 28px;
+  }
+  .foot-links { display: flex; justify-content: center; gap: 16px; margin-bottom: 30px; flex-wrap: wrap; }
+  .foot-links a {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--text); text-decoration: none; font-size: 14px;
+    border: 1px solid var(--border-strong); border-radius: 4px; padding: 8px 18px;
+    transition: border-color .2s, color .2s;
+  }
+  .foot-links a:hover { border-color: var(--accent); color: var(--accent); }
+  .copyright { font-size: 12.5px; color: var(--text-faint); letter-spacing: .5px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 780px) {
+    .about-grid { grid-template-columns: 1fr; }
+    .nav-links a { display: none; }
+    .pipeline { flex-direction: column; align-items: center; }
+    .stage { width: 100%; max-width: 340px; }
+    .arrow { transform: rotate(90deg); padding: 5px 0; }
+    header { padding: 60px 0 48px; }
+    section { padding: 52px 0; }
+  }
+
+  /* ---------- Reveal ---------- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .55s ease, transform .55s ease; }
+  .reveal.on { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="#">黄翩然 <em>·</em> <span style="font-size:.75em;letter-spacing:2px;">HUANG PIANRAN</span></a>
+    <div class="nav-links">
+      <a href="#about"><span class="zh">关于</span><span class="en">About</span></a>
+      <a href="#research"><span class="zh">研究</span><span class="en">Research</span></a>
+      <a href="#projects"><span class="zh">项目</span><span class="en">Projects</span></a>
+      <a href="#skills"><span class="zh">技能</span><span class="en">Skills</span></a>
+      <a href="#journey"><span class="zh">经历</span><span class="en">Experience</span></a>
+      <button class="nav-btn" id="langBtn" title="Switch language">EN</button>
+      <button class="nav-btn" id="themeBtn" title="切换主题">☀</button>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="overline reveal"><span class="zh">个人主页 · Personal Homepage</span><span class="en">Personal Homepage</span></div>
+    <h1 class="name reveal">
+      <span class="zh">黄翩然</span><span class="en">Huang Pianran</span>
+      <span class="sub"><span class="zh">Huang Pianran · Embodied AI &amp; Robotics</span><span class="en">黄翩然 · Embodied AI &amp; Robotics</span></span>
+    </h1>
+    <p class="tagline reveal">
+      <span class="zh">具身智能方向研究生 · 机器人系统工程师。<br>
+      研究<b>让机器人听懂语言、理解环境、完成操作</b>的完整链路 ——
+      从自然语言规划到行为树编排，从视觉感知到真机控制。</span>
+      <span class="en">Graduate student in Embodied AI · Robotics systems engineer.<br>
+      I work on the full pipeline that lets robots <b>understand language, perceive the world, and act</b> —
+      from language-driven planning and behavior-tree orchestration to visual perception and real-robot control.</span>
+    </p>
+    <div class="hero-tags reveal">
+      <span class="chip">Embodied AI</span>
+      <span class="chip">LLM Planning</span>
+      <span class="chip">VLM Perception</span>
+      <span class="chip">Behavior Tree</span>
+      <span class="chip">Manipulation</span>
+      <span class="chip">C++20 / Python</span>
+    </div>
+    <div class="hero-cta reveal">
+      <a class="btn btn-primary" href="#projects"><span class="zh">查看项目 →</span><span class="en">View Projects →</span></a>
+      <a class="btn btn-ghost" href="https://github.com/hollow2003" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="sec-title reveal">
+      <span class="num">I.</span>
+      <h2><span class="zh">关于我</span><span class="en">About</span></h2>
+      <div class="line"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p class="zh">我是<b>哈尔滨工业大学（HIT）研究生</b>，专注于具身智能（Embodied AI）与机器人系统方向。</p>
+        <p class="en">I am a <b>graduate student at Harbin Institute of Technology (HIT)</b>, focusing on Embodied AI and robotics systems.</p>
+        <p class="zh">在机器人 / 具身智能平台的系统研发中，我完整走过了<b>从零到一</b>的过程：设计过高频数据采集系统、做过多相机插件化架构与低延迟流媒体链路、封装过真机机械臂控制能力（关节角控制、IK、手眼标定），也搭建过面向能力编排的全栈行为树开发平台。</p>
+        <p class="en">In robotics platform engineering I have repeatedly built systems <b>from zero to one</b>: a high-frequency data-collection system, a multi-camera plugin architecture with low-latency streaming, real-robot arm control capabilities (joint-angle control, IK, hand–eye calibration), and a full-stack behavior-tree development platform for capability orchestration.</p>
+        <p class="zh">我偏爱把复杂系统拆成<b>可组合、可迁移、可反应</b>的能力单元 —— 插件化、SDK 设计、Schema 驱动表单、类 Kubernetes 的 CRD 资源模型，都是我反复使用的工程语言。</p>
+        <p class="en">I like decomposing complex systems into <b>composable, portable, reactive</b> capability units — plugin architectures, SDK design, schema-driven forms, and Kubernetes-style CRD resource models are my recurring engineering vocabulary.</p>
+        <p class="zh">现在，我在把 LLM 的规划能力与 VLM 的感知能力接入这套体系，让机器人在真实世界里完成端到端的操作闭环。</p>
+        <p class="en">Currently, I am integrating LLM planning and VLM perception into this stack, closing the end-to-end manipulation loop on real robots.</p>
+      </div>
+      <div class="fact-card reveal">
+        <h3><span class="zh">简要信息</span><span class="en">At a Glance</span></h3>
+        <ul>
+          <li><b class="zh">教育</b><b class="en">Education</b><span class="zh">哈工大 · 研究生在读</span><span class="en">HIT · Graduate student</span></li>
+          <li><b class="zh">方向</b><b class="en">Focus</b><span class="zh">具身智能 / 机器人操作</span><span class="en">Embodied AI / Manipulation</span></li>
+          <li><b class="zh">研究</b><b class="en">Research</b><span>LLM × Behavior Tree × VLM</span></li>
+          <li><b class="zh">工程</b><b class="en">Stack</b><span>C++20 · Python · ROS2</span></li>
+          <li><b class="zh">坐标</b><b class="en">Location</b><span class="zh">中国</span><span class="en">China</span></li>
+          <li><b class="zh">状态</b><b class="en">Status</b><span class="zh">毕设研究进行中</span><span class="en">Thesis research ongoing</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="research">
+  <div class="wrap">
+    <div class="sec-title reveal">
+      <span class="num">II.</span>
+      <h2><span class="zh">研究方向</span><span class="en">Research</span></h2>
+      <div class="line"></div>
+    </div>
+    <p class="pipeline-intro reveal">
+      <span class="zh">毕设课题：<b>基于 LLM 规划与 VLM 感知的分层行为树机器人操作框架</b>。从一句自然语言指令出发，LLM 自动生成行为树，行为树按需调用 VLM 感知环境，执行状态实时反馈回规划层实现动态 re-planning，最终在真机上验证端到端闭环。</span>
+      <span class="en">Thesis topic: <b>a hierarchical behavior-tree framework for robot manipulation, combining LLM planning with VLM perception</b>. Starting from a natural-language instruction, an LLM generates the behavior tree; the tree invokes VLM perception on demand; execution feedback flows back to the planner for dynamic re-planning — validated end-to-end on a real robot.</span>
+    </p>
+    <div class="pipeline reveal">
+      <div class="stage">
+        <div class="icon">💬</div>
+        <h4><span class="zh">自然语言指令</span><span class="en">Language Instruction</span></h4>
+        <p><span class="zh">"把红色方块放到盒子旁边"</span><span class="en">"Place the red cube next to the box"</span></p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage">
+        <div class="icon">🧠</div>
+        <h4><span class="zh">LLM 规划层</span><span class="en">LLM Planning</span></h4>
+        <p><span class="zh">行为树生成 + 动态 Re-planning</span><span class="en">BT generation + dynamic re-planning</span></p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage">
+        <div class="icon">🌲</div>
+        <h4><span class="zh">行为树编排层</span><span class="en">BT Orchestration</span></h4>
+        <p><span class="zh">调度感知 / 执行节点，收集反馈</span><span class="en">Schedules perception/action nodes, collects feedback</span></p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage">
+        <div class="icon">👁️</div>
+        <h4><span class="zh">VLM 感知层</span><span class="en">VLM Perception</span></h4>
+        <p><span class="zh">开放词汇检测 · 空间定位 · 状态判断</span><span class="en">Open-vocab detection · spatial grounding · state estimation</span></p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage">
+        <div class="icon">🦾</div>
+        <h4><span class="zh">底层能力</span><span class="en">Low-level Skills</span></h4>
+        <p><span class="zh">抓取检测 · IK 控制 · ROS2</span><span class="en">Grasp detection · IK control · ROS2</span></p>
+      </div>
+    </div>
+    <div class="loopback reveal"><span class="zh">↺ 执行反馈 → LLM 动态重规划（闭环）</span><span class="en">↺ Execution feedback → LLM re-planning (closed loop)</span></div>
+
+    <div class="research-q reveal">
+      <div class="label"><span class="zh">核心研究问题</span><span class="en">Core Research Question</span></div>
+      <p>
+        <span class="zh">什么样的中间表示，能够把开放式任务意图编译为可反应、可组合、可迁移的机器人 manipulation program？</span>
+        <span class="en">What intermediate representation can compile open-ended task intent into reactive, composable, and portable robot manipulation programs?</span>
+      </p>
+      <div class="props">
+        <span>Compositional</span>
+        <span>Embodiment-portable</span>
+        <span>Reactive</span>
+        <span>Capability-adaptive</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-title reveal">
+      <span class="num">III.</span>
+      <h2><span class="zh">精选项目</span><span class="en">Selected Projects</span></h2>
+      <div class="line"></div>
+    </div>
+    <div class="proj-grid">
+      <a class="proj reveal" href="https://github.com/hollow2003" target="_blank" rel="noopener">
+        <div class="proj-head"><span class="icon">🌲</span><span class="ext">↗</span></div>
+        <h3>RobotBehaviorTreeScheduler</h3>
+        <p>
+          <span class="zh">全栈行为树开发平台：React Flow 低代码编辑器、三态执行（RUNNING 跨 tick 恢复）、实时执行追踪、Schema 驱动的能力输入/输出编排。</span>
+          <span class="en">Full-stack behavior-tree development platform: React Flow low-code editor, tri-state execution (RUNNING resumes across ticks), real-time tracing, schema-driven capability I/O orchestration.</span>
+        </p>
+        <div class="tags"><span>Python</span><span>React</span><span>TypeScript</span><span>Behavior Tree</span></div>
+      </a>
+      <a class="proj reveal" href="https://github.com/hollow2003" target="_blank" rel="noopener">
+        <div class="proj-head"><span class="icon">🧠</span><span class="ext">↗</span></div>
+        <h3>LLMScheduler</h3>
+        <p>
+          <span class="zh">自然语言 → 行为树的 AI 生成器。结合能力 CR 绑定校验、输出映射规范与硬件安全前置规则，让 LLM 生成可直接执行的合法行为树。</span>
+          <span class="en">Natural language → behavior tree generator. Combines capability-CR binding validation, output-mapping conventions, and hardware-safety guard rules so LLM-generated trees are directly executable.</span>
+        </p>
+        <div class="tags"><span>LLM</span><span>Prompt Engineering</span><span>Planning</span></div>
+      </a>
+      <a class="proj reveal" href="https://github.com/hollow2003" target="_blank" rel="noopener">
+        <div class="proj-head"><span class="icon">🗺️</span><span class="ext">↗</span></div>
+        <h3>SemanticMapGenerator</h3>
+        <p>
+          <span class="zh">纯 Python RGB-D 语义地图生成器：VLM 语义分析 + LangSAM 开放词汇分割 + 几何空间关系 + 机器人工作空间可达性判断，输出结构化 JSON。</span>
+          <span class="en">Pure-Python RGB-D semantic map generator: VLM semantic analysis + LangSAM open-vocabulary segmentation + geometric spatial relations + robot-workspace reachability, exported as structured JSON.</span>
+        </p>
+        <div class="tags"><span>VLM</span><span>LangSAM</span><span>RGB-D</span><span>Reachability</span></div>
+      </a>
+      <a class="proj reveal" href="https://github.com/hollow2003" target="_blank" rel="noopener">
+        <div class="proj-head"><span class="icon">✋</span><span class="ext">↗</span></div>
+        <h3>AnyGraspAbility</h3>
+        <p>
+          <span class="zh">RGB-D 抓取位姿检测能力：图像 + mask → 点云构建 → AnyGrasp 推理 → 6-DOF 抓取位姿与夹爪宽度，供下游 IK 控制直接消费。</span>
+          <span class="en">RGB-D grasp-pose detection capability: image + mask → point-cloud construction → AnyGrasp inference → 6-DOF grasp pose and gripper width, directly consumable by downstream IK control.</span>
+        </p>
+        <div class="tags"><span>Grasp Detection</span><span>Point Cloud</span><span>Python</span></div>
+      </a>
+      <a class="proj reveal" href="https://github.com/hollow2003" target="_blank" rel="noopener">
+        <div class="proj-head"><span class="icon">🦾</span><span class="ext">↗</span></div>
+        <h3>ArmCtrl Abilities</h3>
+        <p>
+          <span class="zh">机械臂控制能力族（SO-101 / 五轴臂）：关节角控制、IK 位姿运动、手眼标定链路、末端限速与柔顺夹取，含五轴 IK 姿态降维处理。</span>
+          <span class="en">Robot-arm control capability family (SO-101 / 5-axis arm): joint-angle control, IK pose motion, hand–eye calibration pipeline, end-effector speed limiting and compliant grasping, with orientation dimension-reduction for 5-axis IK.</span>
+        </p>
+        <div class="tags"><span>IK</span><span class="zh">手眼标定</span><span class="en">Hand–eye Calib</span><span>Serial / ROS2</span></div>
+      </a>
+      <a class="proj reveal" href="https://github.com/hollow2003" target="_blank" rel="noopener">
+        <div class="proj-head"><span class="icon">✂️</span><span class="ext">↗</span></div>
+        <h3>LangSegmentAnythingAbility</h3>
+        <p>
+          <span class="zh">基于 LangSAM（GroundingDINO + SAM2）的自然语言图像分割能力：RGB 图像 + 文本提示词 → 目标二值 mask，作为抓取检测的感知上游，输出路径化避免大字段膨胀。</span>
+          <span class="en">Natural-language image segmentation built on LangSAM (GroundingDINO + SAM2): RGB image + text prompt → target binary mask, serving as the perception front-end for grasp detection, with path-based outputs to avoid payload bloat.</span>
+        </p>
+        <div class="tags"><span>LangSAM</span><span>GroundingDINO</span><span>SAM2</span><span>Segmentation</span></div>
+      </a>
+    </div>
+    <p class="proj-note reveal">
+      <span class="zh">* 部分研究项目仓库整理公开中，欢迎通过 GitHub 关注最新进展。</span>
+      <span class="en">* Some research repositories are being prepared for public release — follow my GitHub for updates.</span>
+    </p>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-title reveal">
+      <span class="num">IV.</span>
+      <h2><span class="zh">技术栈</span><span class="en">Skills</span></h2>
+      <div class="line"></div>
+    </div>
+    <div class="skill-grid">
+      <div class="skill-card reveal">
+        <h3><span class="zh">机器人 &amp; 具身智能</span><span class="en">Robotics &amp; Embodied AI</span></h3>
+        <ul>
+          <li class="zh">行为树设计与执行引擎</li><li class="en">Behavior-tree design &amp; execution engines</li>
+          <li class="zh">LLM 任务规划 / Re-planning</li><li class="en">LLM task planning / re-planning</li>
+          <li class="zh">VLM 感知（GroundingDINO / SAM2）</li><li class="en">VLM perception (GroundingDINO / SAM2)</li>
+          <li class="zh">抓取检测（AnyGrasp）</li><li class="en">Grasp detection (AnyGrasp)</li>
+          <li class="zh">机械臂 IK · 手眼标定</li><li class="en">Arm IK · hand–eye calibration</li>
+          <li class="zh">ROS2 · 真机部署调试</li><li class="en">ROS2 · real-robot deployment</li>
+        </ul>
+      </div>
+      <div class="skill-card reveal">
+        <h3><span class="zh">系统 &amp; 架构</span><span class="en">Systems &amp; Architecture</span></h3>
+        <ul>
+          <li class="zh">插件化架构 · 动态库加载</li><li class="en">Plugin architecture · dynamic loading</li>
+          <li class="zh">SDK 设计（C++ / Python 双栈）</li><li class="en">SDK design (C++ / Python)</li>
+          <li class="zh">类 K8s CRD 资源模型</li><li class="en">K8s-style CRD resource models</li>
+          <li class="zh">Schema → ORM / 表单自动生成</li><li class="en">Schema → ORM / auto-generated forms</li>
+          <li class="zh">设备发现 · 热插拔恢复</li><li class="en">Device discovery · hot-plug recovery</li>
+          <li class="zh">低延迟音视频流（RTSP ~110ms）</li><li class="en">Low-latency streaming (RTSP ~110 ms)</li>
+        </ul>
+      </div>
+      <div class="skill-card reveal">
+        <h3><span class="zh">语言 &amp; 框架</span><span class="en">Languages &amp; Frameworks</span></h3>
+        <ul>
+          <li>C++20 · CMake / xmake</li>
+          <li>Python · Flask · PyTorch</li>
+          <li>TypeScript · React · React Flow</li>
+          <li>SQL · ORM · JSON Schema</li>
+        </ul>
+      </div>
+      <div class="skill-card reveal">
+        <h3><span class="zh">工程效率</span><span class="en">Engineering Practice</span></h3>
+        <ul>
+          <li class="zh">CI/CD 流水线（Python/C++ 统一）</li><li class="en">Unified Python/C++ CI/CD pipelines</li>
+          <li class="zh">Docker · 镜像构建与发布</li><li class="en">Docker · image build &amp; release</li>
+          <li class="zh">性能分析 · 内存优化</li><li class="en">Profiling · memory optimization</li>
+          <li class="zh">高频数据采集（60Hz+）</li><li class="en">High-frequency data collection (60 Hz+)</li>
+          <li class="zh">LLM 辅助知识管理</li><li class="en">LLM-assisted knowledge management</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="journey">
+  <div class="wrap">
+    <div class="sec-title reveal">
+      <span class="num">V.</span>
+      <h2><span class="zh">经历轨迹</span><span class="en">Experience</span></h2>
+      <div class="line"></div>
+    </div>
+    <div class="timeline">
+      <div class="titem reveal">
+        <h3><span class="zh">毕设研究：LLM × 行为树 × VLM 融合框架</span><span class="en">Thesis: LLM × Behavior Tree × VLM Framework</span></h3>
+        <div class="meta"><span class="zh">2026 – 至今 · 研究进行中</span><span class="en">2026 – present · ongoing</span></div>
+        <p>
+          <span class="zh">提出 LLM ↔ 行为树双向接口，感知节点嵌入 VLM，真机端到端闭环验证。已打通 RGB-D 获取 → 语言分割 → 抓取检测 → IK 控制 → 行为树编排的完整链路。</span>
+          <span class="en">Proposed a bidirectional LLM ↔ behavior-tree interface with VLM-embedded perception nodes, validated end-to-end on a real robot. The full chain — RGB-D capture → language-guided segmentation → grasp detection → IK control → behavior-tree orchestration — is operational.</span>
+        </p>
+      </div>
+      <div class="titem reveal">
+        <h3>
+          <span class="zh">机器人系统研发 · 上海具识智能（InsightOS 机器人平台）</span><span class="en">Robotics Systems R&amp;D · Shanghai Jushi Intelligence (InsightOS Robotics Platform)</span>
+          <span class="badge"><span class="zh">实习</span><span class="en">INTERNSHIP</span></span>
+        </h3>
+        <div class="meta"><span class="zh">2025.04 – 至今 · 研发实习生</span><span class="en">Apr 2025 – present · R&amp;D Intern</span></div>
+        <ul class="tlist">
+          <li class="zh"><b>从零到一</b>设计机器人数据采集系统：Server-Client 架构、JSON Schema → ORM 自动化管道，覆盖 HTTP / ROS / ROSBridge 多协议，支持 60Hz+ 高频采集，完成真机与仿真部署交付。</li>
+          <li class="en">Designed a robot data-collection system <b>from scratch</b>: Server-Client architecture, JSON Schema → ORM automated pipeline, HTTP / ROS / ROSBridge protocols, 60 Hz+ high-frequency acquisition, delivered on real robots and in simulation.</li>
+          <li class="zh">主导多媒体意图路由系统的<b>相机插件化重构</b>（RealSense / Orbbec / V4L2），交付 C++ / Python 双 SDK，实现热插拔自动恢复，SDK 取流延迟优化至 ~80ms。</li>
+          <li class="en">Led the <b>camera plugin refactor</b> of a multimedia intent-routing system (RealSense / Orbbec / V4L2), shipped dual C++/Python SDKs with hot-plug auto-recovery, optimizing SDK frame latency to ~80 ms.</li>
+          <li class="zh">完成真机机械臂<b>关节角控制改版</b>（ROS Topic 驱动 + 串口读写优化）；维护 YOLO 检测能力、Webots 仿真适配与 Kernel CI/CD 部署验证。</li>
+          <li class="en">Reworked real-robot arm <b>joint-angle control</b> (ROS-topic driven with serial I/O hardening); maintained YOLO detection, Webots simulation adaptation, and kernel CI/CD deployment verification.</li>
+          <li class="zh">角色覆盖开发、代码审查、性能分析、架构设计与问题排查，按月度节点制汇报交付。</li>
+          <li class="en">Role spanned development, code review, performance analysis, architecture design, and troubleshooting, with monthly milestone reporting.</li>
+        </ul>
+      </div>
+      <div class="titem reveal">
+        <h3><span class="zh">哈尔滨工业大学 · 研究生</span><span class="en">Harbin Institute of Technology · Graduate Student</span></h3>
+        <div class="meta"><span class="zh">在读 · 具身智能方向</span><span class="en">Enrolled · Embodied AI</span></div>
+        <p>
+          <span class="zh">系统学习算法设计与分析、机器人学相关课程，逐步聚焦具身智能与机器人操作方向。</span>
+          <span class="en">Coursework in algorithm design and robotics, progressively focusing on embodied intelligence and robot manipulation.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="quote">
+      <span class="zh">"把开放式任务意图，编译成机器人真正能执行的程序。"</span>
+      <span class="en">"Compiling open-ended task intent into programs robots can actually execute."</span>
+    </p>
+    <div class="foot-links">
+      <a href="https://github.com/hollow2003" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:25S003016@hit.edu.cn">Email</a>
+    </div>
+    <p class="copyright">© 2026 Huang Pianran · Plain HTML/CSS · GitHub Pages</p>
+  </div>
+</footer>
+
+<script>
+  const root = document.documentElement;
+
+  // ---- 语言切换 ----
+  const langBtn = document.getElementById('langBtn');
+  const applyLang = l => {
+    if (l === 'en') {
+      root.setAttribute('data-lang', 'en');
+      root.setAttribute('lang', 'en');
+      langBtn.textContent = '中';
+      document.title = 'Huang Pianran · Embodied AI & Robotics';
+    } else {
+      root.removeAttribute('data-lang');
+      root.setAttribute('lang', 'zh-CN');
+      langBtn.textContent = 'EN';
+      document.title = '黄翩然 · 具身智能与机器人系统';
+    }
+  };
+  applyLang(localStorage.getItem('lang') || 'zh');
+  langBtn.addEventListener('click', () => {
+    const next = root.hasAttribute('data-lang') ? 'zh' : 'en';
+    localStorage.setItem('lang', next);
+    applyLang(next);
+  });
+
+  // ---- 主题切换（默认浅色，可切深色）----
+  const themeBtn = document.getElementById('themeBtn');
+  const applyTheme = t => {
+    if (t === 'dark') { root.setAttribute('data-theme', 'dark'); themeBtn.textContent = '☾'; }
+    else { root.removeAttribute('data-theme'); themeBtn.textContent = '☀'; }
+  };
+  applyTheme(localStorage.getItem('theme') || 'light');
+  themeBtn.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+  });
+
+  // ---- 滚动渐入 ----
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
